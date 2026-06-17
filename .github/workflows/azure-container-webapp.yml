@@ -1,17 +1,9 @@
 name: NodeJs
 
 on:
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Which environment to deploy to?'
-        required: true
-        default: 'staging'
-        type: choice
-        options:
-          - staging
-          - production
-
+  schedule:
+    - cron: '*/5 * * * *'
+    
 jobs:
   build:
     runs-on: ubuntu-latest
