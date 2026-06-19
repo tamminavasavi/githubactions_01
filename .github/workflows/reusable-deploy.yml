@@ -1,38 +1,15 @@
-name: Reusable Deployment Engine
+name: Staging
 
 on:
-  workflow_call:
-    inputs:
-      target_env:
-        required: true
-        type: string
-        description: "Target environment runtime execution context"
-    outputs:
-      deployment_outcome:
-        description: "The explicit terminal state of the tracking step"
-        value: ${{ jobs.deploy.outputs.step_result }}
+  workflow_dispatch
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: ${{ inputs.target_env }}
-    outputs:
-      step_result: ${{ steps.capture-state.outputs.result }}
+
     steps:
-      - name: Secure Cryptographic Checkout
-        uses: actions/checkout@1d96c772d19495a3b5c517cd2bc0cb401ea0529f
+      - name: Set Version
+        run: export MY_VERSION="v1.5.0"
 
-      - name: Initialize Deployment Script Assets
-        run: |
-          mkdir -p ./scripts
-          echo 'echo "Executing low-level system deployment sequence..."' > ./scripts/deploy.sh
-          chmod +x ./scripts/deploy.sh
-
-      - name: Execute Core Deployment Matrix Logic
-        id: do_deploy
-        run: ./scripts/deploy.sh
-
-      - name: Propagate Final Pipeline Output States
-        id: capture-state
-        if: always()
-        run: echo "result=${{ steps.do_deploy.outcome }}" >> $GITHUB_OUTPUT
+      - name: Print Version
+        run: echo "The version is $MY_VERSION"
