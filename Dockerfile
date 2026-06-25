@@ -1,19 +1,18 @@
 # ---------- Stage 1: Build ----------
-FROM node:20-alpine AS builder
+FROM node:20-alpine
 
 WORKDIR /app
- 
-# Copy dependency files first (for better caching)
-COPY package*.json ./
 
-# Install dependencies
-RUN npm install
+ENV NODE_ENV=production
+ENV PORT=3000
 
-# Copy rest of the code
-COPY . .
+COPY --from=builder /app/dist ./dist
 
-# Build application
-RUN npm run build
+RUN npm install -g serve
+
+EXPOSE 3000
+
+CMD ["serve", "-s", "dist", "-l", "3000"]
 
 
 # ---------- Stage 2: Production ----------
